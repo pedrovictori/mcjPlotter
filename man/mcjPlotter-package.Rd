@@ -4,12 +4,20 @@
 \name{mcjPlotter-package}
 \alias{mcjPlotter}
 \alias{mcjPlotter-package}
-\title{mcjPlotter: What the Package Does (One Line, Title Case)}
+\title{mcjPlotter: Plot MicroCJ Simulation Data}
 \description{
-What the package does (one paragraph).
+Helps plotting MicroCJ simulation data and cleaning the output files.
+}
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/CBigOxf/mcjPlotter}
+  \item Report bugs at \url{https://github.com/CBigOxf/mcjPlotter/issues}
+}
+
 }
 \author{
-\strong{Maintainer}: First Last \email{first.last@example.com} (\href{https://orcid.org/YOUR-ORCID-ID}{ORCID})
+\strong{Maintainer}: Pedro Victori \email{pedroluisvictori@gmail.com} (\href{https://orcid.org/0000-0001-6321-5584}{ORCID})
 
 }
 \keyword{internal}

@@ -1,19 +1,26 @@
 Package: mcjPlotter
-Title: What the Package Does (One Line, Title Case)
-Version: 0.0.0.9000
+Title: Plot MicroCJ Simulation Data
+Version: 0.0.1
 Authors@R: 
-    person("First", "Last", , "first.last@example.com", role = c("aut", "cre"),
-           comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: What the package does (one paragraph).
+    person(given = "Pedro",
+           family = "Victori",
+           role = c("aut", "cre"),
+           email = "pedroluisvictori@gmail.com",
+           comment = c(ORCID = "https://orcid.org/0000-0001-6321-5584"))
+Description: Helps plotting MicroCJ simulation data and cleaning the output files.
 License: GPL (>= 3)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.2
 Imports: 
+    ggplot2,
+    tidyr,
     dplyr,
     ggpubr,
     magrittr,
     plotrix,
-    readr
+    readr,
+    stats,
+    utils
 URL: https://github.com/CBigOxf/mcjPlotter
 BugReports: https://github.com/CBigOxf/mcjPlotter/issues
