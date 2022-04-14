@@ -1,0 +1,66 @@
+consolidatePbnSimulationData = function(
+    directory="",
+    experiment.tag="default",
+    probabilities,
+    n.files){
+  nprob = length(probabilities)
+  data = vector("list", nprob)
+  names(data)=probabilities
+  for(i in 1:nprob){
+    prob = probabilities[[i]]
+    exp.name = paste0(experiment.tag, prob)
+    all = vector("list", n.files)
+    for(j in 1:n.files){
+      k = j + (i - 1) * 10
+      data.j = readr::read_csv(paste0(directory, "/",exp.name, "-", k, "_stats-", exp.name, "_1.csv"), show_col_types = F) %>%
+        rename(timepoint = 'time point', cell.count='cell count') %>%
+        select(-cell.count) %>% #excluding total count
+        group_by(timepoint) %>%
+        summarise(across(.cols = everything(), mean))
+      all[[j]] = data.j
+    }
+
+    data[[prob]] = bind_rows(all) %>%
+      group_by(timepoint) %>%
+      summarise(across(.cols = everything(), list(mean = mean, sterr = plotrix::std.error))) %>%
+      pivot_longer(!timepoint, names_to = c("pop", "var"), names_sep = "_", values_to = "n") %>%
+      pivot_wider(names_from = var, values_from = n)
+  }
+  data[["experiment.tag"]]=experiment.tag
+
+  return(data)
+}
+
+plotPbnSimulation = function(
+    data,
+    directory="",
+    plot.title="PBN simulation",
+    plot.subtitle="Average of all replicates and standard error",
+    timesteps,
+    pop.labels){
+  probabilities = head(names(data), -1) #remove last element, the experiment.tag
+  plots = vector("list", length(probabilities))
+  names(plots)=probabilities
+  for(prob in probabilities){
+    p = data[[prob]] %>%
+      ggplot(aes(x = timepoint, y = mean, colour = pop, fill = pop)) +
+      geom_line() +
+      xlim(0, timesteps) +
+      geom_ribbon(aes(ymin = mean - sterr, ymax = mean + sterr), alpha=0.1, linetype = 0) +
+      ggpubr::theme_pubr(legend = 'top') +
+      labs(title=plot.title, subtitle = paste0(plot.subtitle, " p = ", prob),
+           y = "Cell count", colour = "Subpopulation", fill = "Subpopulation")
+    if(length(pop.labels) > 0){
+      p = p + scale_color_hue(labels = pop.labels) + scale_fill_hue(labels = pop.labels)
+    }
+    plot(p)
+    plots[[prob]] = p
+
+    if (!file.exists(directory)) {
+      dir.create(directory)
+    }
+    ggsave(paste0(directory, paste0(data[["experiment.tag"]], prob), ".png"), p, width = 7.5, height = 5)
+  }
+  return(plots)
+}
+
