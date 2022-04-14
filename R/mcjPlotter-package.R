@@ -2,6 +2,8 @@
 "_PACKAGE"
 
 ## usethis namespace: start
+#' @importFrom stats var
+#' @importFrom utils head
 ## usethis namespace: end
 #' @import dplyr
 #' @import ggplot2
