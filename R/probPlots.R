@@ -9,8 +9,8 @@
 #' @export
 consolidatePbnSimulationData = function(directory = "",
                                         experiment.tag = "default",
-                                        probabilities,
-                                        n.files) {
+                                        probabilities = "",
+                                        n.files = 10) {
   nprob = length(probabilities)
   data = vector("list", nprob)
   names(data) = probabilities
@@ -28,7 +28,7 @@ consolidatePbnSimulationData = function(directory = "",
       all[[j]] = data.j
     }
 
-    data[[prob]] = bind_rows(all) %>%
+    data[[i]] = bind_rows(all) %>%
       group_by(timepoint) %>%
       summarise(across(.cols = everything(), list(mean = mean, sterr = plotrix::std.error))) %>%
       pivot_longer(!timepoint, names_to = c("pop", "var"), names_sep = "_", values_to = "n") %>%
@@ -59,22 +59,25 @@ plotPbnSimulation = function(data,
   probabilities = head(names(data), -1) # remove last element, the experiment.tag
   plots = vector("list", length(probabilities))
   names(plots) = probabilities
-  for (prob in probabilities) {
-    p = data[[prob]] %>%
+  for (i in 1:length(probabilities)) {
+    prob = probabilities[[i]]
+    p = data[[i]] %>%
       ggplot(aes(x = timepoint, y = mean, colour = pop, fill = pop)) +
       geom_line() +
       xlim(0, timesteps) +
       geom_ribbon(aes(ymin = mean - sterr, ymax = mean + sterr), alpha = 0.1, linetype = 0) +
       ggpubr::theme_pubr(legend = "top") +
       labs(
-        title = plot.title, subtitle = paste0(plot.subtitle, " p = ", prob),
+        title = plot.title,
+        subtitle = paste0(plot.subtitle,
+                          if_else(prob == "", "", paste0("p= ", prob))),
         y = "Cell count", colour = "Subpopulation", fill = "Subpopulation"
       )
     if (length(pop.labels) > 0) {
       p = p + scale_color_hue(labels = pop.labels) + scale_fill_hue(labels = pop.labels)
     }
     plot(p)
-    plots[[prob]] = p
+    plots[[i]] = p
 
     if (!file.exists(directory)) {
       dir.create(directory)
