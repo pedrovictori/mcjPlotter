@@ -84,8 +84,11 @@ plotConcentration = function(data,
           rect_gp = gpar(col = "white", lwd = 2),
           col = color,
           border = TRUE,
-          column_title = paste0("Time = ",time),
-          show_heatmap_legend = FALSE
+          column_title = paste0(element,", time = ",time),
+          show_heatmap_legend = FALSE,
+          width = ncol(mat)*unit(1.5, "mm"), # to create square grid
+          height = ncol(mat)*unit(1.5, "mm"),
+          
         ))) 
         
         if(time == max(data$Time)){
@@ -110,7 +113,7 @@ plotConcentration = function(data,
   p = patchwork::wrap_plots(c(heatmap_list,legend_list)) + patchwork::plot_annotation(title = plot.title,
                                                                                   subtitle = plot.subtitle) +
     theme(plot.title  = element_text(size = 15), plot.subtitle = element_text(size = 12))
-  plot(p)
+  plot(p) # this won't be accurate, check printed version
   
   ggsave(paste0(directory, "concentrationPlots.png"), p, width = in.width, height = in.height)
   
