@@ -110,7 +110,7 @@ plotConcentration = function(data,
           # drawing only at last time per element plotted to
           # facilitate patchwork alignment
           legend_list[[paste0(element, "_", time)]] =
-            grid::grid.grabExpr(draw(ComplexHeatmap::Legend(
+            grid::grid.grabExpr(ComplexHeatmap::draw(ComplexHeatmap::Legend(
               at = seq(min(as.numeric(data[, element])),
                 max(as.numeric(data[, element])),
                 length = 3
