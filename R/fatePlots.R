@@ -14,7 +14,7 @@ consolidateFateData = function(directory = "",
   df = read.csv(paste0(directory, "/", files)) %>%
     dplyr::relocate(cell.count, .after = WT)
   df_list = list()
-  for (mutant in to.plot) {
+  for (mutant in mutants.to.plot) {
     df_list[[mutant]] = df[c("time.point", grep(mutant, colnames(df),
       value = TRUE
     ))]
@@ -103,3 +103,6 @@ plotFate = function(data,
 
   return(p)
 }
+
+# TODO
+# there are negative no_decision values

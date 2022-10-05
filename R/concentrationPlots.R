@@ -75,7 +75,7 @@ plotConcentration = function(data,
       colnames(mat) = c(0:(ncol(mat) - 1))
 
       if (length(unique(seq(min(as.numeric(data[, element])),
-        max(as.numeric(data[, element])), 
+        max(as.numeric(data[, element])),
         length = 3
       ))) < 2) {
         message(
@@ -138,8 +138,3 @@ plotConcentration = function(data,
 
   return(p)
 }
-
-
-
-
-# cambiar y de abajo a arriba y a la izda
