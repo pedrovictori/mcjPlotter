@@ -8,18 +8,18 @@
 
 consolidateConcentrationData = function(directory = "",
                                         to.plot = c("EGF","oxygen")) {
-  
+
   files = list.files(directory,pattern = ".csv",full.names = FALSE)
-  concentration = lapply(paste0(directory,"/",files),function(x) read.csv(x,sep = ",")) 
-  concentration =  do.call("rbind",Map(cbind, 
-                                       Time = sapply(str_split(files,pattern = "_"),`[`,4) ,
+  concentration = lapply(paste0(directory,"/",files),function(x) read.csv(x,sep = ","))
+  concentration =  do.call("rbind",Map(cbind,
+                                       Time = sapply(stringr::str_split(files,pattern = "_"),`[`,4) ,
                                        concentration))
   for(element in to.plot){
     concentration[,element] = as.numeric(concentration[,element], scientific=TRUE) # format to scientific notation to prevent misbehavior of plots
   }
   concentration$Time = as.numeric(gsub(pattern = "t",replacement = "", concentration$Time))
   concentration = concentration[with(concentration,order(Time,i,j)),]
-  
+
   return(concentration)
 }
 
@@ -31,11 +31,11 @@ consolidateConcentrationData = function(directory = "",
 #' @param plot.subtitle The plot subtitle.
 #' @param in.width Width in inches.
 #' @param in.height Height in inches.
-#' 
+#'
 #' @return A list of with heatmap plots of concentrations per i,j.
 #' @export
-#' 
-#' 
+#'
+#'
 
 plotConcentration = function(data,
                              directory = "",
@@ -43,34 +43,34 @@ plotConcentration = function(data,
                              plot.subtitle = "Per i and j coordinates",
                              in.width = 9,
                              in.height = 9) {
-  
+
   heatmap_list = list()
   legend_list = list()
-  
+
   for (element in setdiff(colnames(data), c("Time", "i", "j"))) {
     for(time in unique(data$Time)){
-    mat = data %>% 
-      dplyr::select(!c(setdiff(setdiff(colnames(data), c("Time", "i", "j")),element))) %>%
+    mat = data %>%
+      select(!c(setdiff(setdiff(colnames(data), c("Time", "i", "j")),element))) %>%
       pivot_wider(names_from = j, values_from = as.symbol(element), id_expand = TRUE) %>%
-      dplyr::filter(Time == time) %>%
-      dplyr::select(!Time) %>%
+      filter(Time == time) %>%
+      select(!Time) %>%
        as.data.frame()
-      
+
       rownames(mat) = mat$i
       mat = mat[-1]
-      
+
       mat = matrix(as.numeric(unlist(mat)), nrow = nrow(mat))
-      
+
       rownames(mat) = c(0:(nrow(mat) - 1))
       colnames(mat) = c(0:(ncol(mat) - 1))
-      
-      if(length(unique(seq(min(as.numeric(data[,element])), 
-                    max(as.numeric(data[,element])), , 
+
+      if(length(unique(seq(min(as.numeric(data[,element])),
+                    max(as.numeric(data[,element])), ,
                     length = 3)))<2){
         message("Warning: min() and max() values for ", element, " at time ", time, " are identical. Not saving plot.")
       } else{
-        color = circlize::colorRamp2(seq(min(as.numeric(data[,element])), 
-                                         max(as.numeric(data[,element])), 
+        color = circlize::colorRamp2(seq(min(as.numeric(data[,element])),
+                                         max(as.numeric(data[,element])),
                                          length = 3), c("#188FA7", "#EEEEEE", "#EC4E20"), space = "RGB")
         heatmap_list[[paste0(element,"_",time)]] = grid::grid.grabExpr(ComplexHeatmap::draw(ComplexHeatmap::Heatmap(
           mat,
@@ -88,24 +88,24 @@ plotConcentration = function(data,
           show_heatmap_legend = FALSE,
           width = ncol(mat)*unit(1.5, "mm"), # to create square grid
           height = ncol(mat)*unit(1.5, "mm"),
-          
-        ))) 
-        
+
+        )))
+
         if(time == max(data$Time)){
         # drawing only at last time per element plotted to facilitate patchwork alignment
-          legend_list[[paste0(element,"_",time)]] = grid::grid.grabExpr(draw(ComplexHeatmap::Legend(at = seq(min(as.numeric(data[,element])), 
-                                                                                    max(as.numeric(data[,element])), 
+          legend_list[[paste0(element,"_",time)]] = grid::grid.grabExpr(draw(ComplexHeatmap::Legend(at = seq(min(as.numeric(data[,element])),
+                                                                                    max(as.numeric(data[,element])),
                                                                                     length = 3) ,
                                                                            title = element, col_fun = color)))
-          
+
         }
 
       }
-     
-    
-      
+
+
+
     }
-    
+
   }
   if (!file.exists(directory)) {
     dir.create(directory)
@@ -114,13 +114,13 @@ plotConcentration = function(data,
                                                                                   subtitle = plot.subtitle) +
     theme(plot.title  = element_text(size = 15), plot.subtitle = element_text(size = 12))
   plot(p) # this won't be accurate, check printed version
-  
+
   ggsave(paste0(directory, "concentrationPlots.png"), p, width = in.width, height = in.height)
-  
+
   return(p)
 }
-  
-  
+
+
 
 
 # cambiar y de abajo a arriba y a la izda

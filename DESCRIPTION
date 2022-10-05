@@ -21,6 +21,8 @@ Imports:
     plotrix,
     readr,
     stats,
-    utils
+    utils,
+    ComplexHeatmap,
+    circlize
 URL: https://github.com/CBigOxf/mcjPlotter
 BugReports: https://github.com/CBigOxf/mcjPlotter/issues
