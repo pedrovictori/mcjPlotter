@@ -7,8 +7,8 @@
 consolidatePbnSimulationData(
   directory = "",
   experiment.tag = "default",
-  probabilities,
-  n.files
+  probabilities = "",
+  n.files = 10
 )
 }
 \arguments{
