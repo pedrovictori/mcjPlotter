@@ -75,7 +75,7 @@ plotConcentration = function(data,
       colnames(mat) = c(0:(ncol(mat) - 1))
 
       if (length(unique(seq(min(as.numeric(data[, element])),
-        max(as.numeric(data[, element])), ,
+        max(as.numeric(data[, element])), 
         length = 3
       ))) < 2) {
         message(
