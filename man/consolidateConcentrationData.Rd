@@ -9,7 +9,8 @@ consolidateConcentrationData(directory = "", to.plot = c("EGF", "oxygen"))
 \arguments{
 \item{directory}{The directory from which to load the data.}
 
-\item{to.plot}{Elements of interest to plot later. Default: c("EGF", "oxygen")}
+\item{to.plot}{Elements of interest to plot later.
+Default: c("EGF", "oxygen")}
 }
 \value{
 A single list of data frames, one for each element to plot.
