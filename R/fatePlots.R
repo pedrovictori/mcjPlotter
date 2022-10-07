@@ -7,44 +7,22 @@
 #'
 consolidateFateData = function(directory = "",
                                mutants.to.plot = c(
-                                 "mutA", "mutB",
-                                 "mutC", "WT"
+                                 "EGFR+", "p53-PTEN-",
+                                 "EGFR+p53-PTEN-", "WT"
                                )) {
   files = list.files(directory, pattern = ".csv", full.names = FALSE)
-  df = read.csv(paste0(directory, "/", files)) %>%
-    dplyr::relocate(cell.count, .after = WT)
-  df_list = list()
-  for (mutant in mutants.to.plot) {
-    df_list[[mutant]] = df[c("time.point", grep(mutant, colnames(df),
-      value = TRUE
-    ))]
-    colnames(df_list[[mutant]])[grep(
-      "expressing",
-      colnames(df_list[[mutant]])
-    )] =
-      sapply(stringr::str_split(colnames(df_list[[mutant]])[grep(
-        "expressing",
-        colnames(df_list[[mutant]])
-      )], pattern = "\\."), `[`, 3)
-    df_list[[mutant]] = df_list[[mutant]] %>%
-      na.omit() %>%
-      dplyr::mutate(Apoptosis_cumulative = cumsum(Apoptosis)) %>%
-      dplyr::mutate(to_substract = as.numeric(rowSums(.[3:(ncol(.) - 1)])))
-    df_list[[mutant]]["No_decision"] = df_list[[mutant]][mutant] -
-      df_list[[mutant]]["to_substract"]
-    df_list[[mutant]] = df_list[[mutant]] %>%
-      pivot_longer(
-        cols = !c(time.point, as.symbol(mutant), to_substract),
-        names_to = "Fate", values_to = "Cells"
-      ) %>%
-      dplyr::mutate(Mutant = mutant)
-    df_list[[mutant]]$Total_cells = df_list[[mutant]][[mutant]]
-    df_list[[mutant]] = df_list[[mutant]] %>%
-      dplyr::select(time.point, Total_cells, Mutant, Fate, Cells)
-  }
-
-  df = do.call("rbind", df_list)
-
+  
+  df = read.csv(paste0(directory, "/", files),check.names = FALSE)  %>% 
+    rename(timepoint = `time point`) %>% 
+    pivot_longer(!timepoint, values_to = 'count') %>% 
+    separate(name, sep = '_', into = c("mutant", "fate"), extra = 'merge') %>%
+    na.omit() %>%
+    pivot_wider(names_from = c( fate), values_from = count) %>%
+    group_by(mutant) %>%
+    mutate(apoptosis_cumulative = cumsum(apoptosis)) %>%
+    pivot_longer(cols = !c(timepoint, mutant), names_to = "Fate", values_to = "count")
+  
+  
   return(df)
 }
 
@@ -76,23 +54,27 @@ plotFate = function(data,
   # Apoptosis or Apoptosis_cumulative
   if (apoptosis.cumulative == TRUE) {
     data = data %>%
-      dplyr::filter(Fate != "Apoptosis")
+      dplyr::filter(Fate != "apoptosis")
   } else {
     data = data %>%
-      dplyr::filter(Fate != "Apoptosis_cumulative")
+      dplyr::filter(Fate != "apoptosis_cumulative")
   }
 
   p = data %>%
-    dplyr::mutate(Fate = relevel(as.factor(Fate), ref = "No_decision")) %>%
-    ggplot(., aes(x = time.point, y = Cells, fill = Fate, color = Fate)) +
+    dplyr::mutate(Fate = relevel(as.factor(Fate), ref = "no_fate_reached")) %>%
+    ggplot(., aes(x = timepoint, y = count, fill = Fate, color = Fate)) +
     geom_area(alpha = 0.8, size = .1) +
     viridis::scale_fill_viridis(discrete = T) +
     viridis::scale_color_viridis(discrete = T) +
-    theme_minimal() +
-    facet_wrap(facets = vars(Mutant)) +
     xlab("Time point") +
+    ylab("Cell count") + 
     ggtitle(label = plot.title, subtitle = plot.subtitle)
 
+  p = ggpubr::facet(p + theme_pubr(), facet.by = "mutant",
+        #short.panel.labs = FALSE,   
+        panel.labs.background = list(fill = "white", color = "black")
+  )
+  
   if (!file.exists(directory)) {
     dir.create(directory)
   }
