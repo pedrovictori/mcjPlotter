@@ -11,18 +11,18 @@ consolidateFateData = function(directory = "",
                                  "EGFR+p53-PTEN-", "WT"
                                )) {
   files = list.files(directory, pattern = ".csv", full.names = FALSE)
-  
-  df = read.csv(paste0(directory, "/", files),check.names = FALSE)  %>% 
-    rename(timepoint = `time point`) %>% 
-    pivot_longer(!timepoint, values_to = 'count') %>% 
+
+  df = read.csv(paste0(directory, "/", files),check.names = FALSE)  %>%
+    rename(timepoint = `time point`) %>%
+    pivot_longer(!timepoint, values_to = 'count') %>%
     separate(name, sep = '_', into = c("mutant", "fate"), extra = 'merge') %>%
     na.omit() %>%
     pivot_wider(names_from = c( fate), values_from = count) %>%
     group_by(mutant) %>%
     mutate(apoptosis_cumulative = cumsum(apoptosis)) %>%
     pivot_longer(cols = !c(timepoint, mutant), names_to = "Fate", values_to = "count")
-  
-  
+
+
   return(df)
 }
 
@@ -67,14 +67,13 @@ plotFate = function(data,
     viridis::scale_fill_viridis(discrete = T) +
     viridis::scale_color_viridis(discrete = T) +
     xlab("Time point") +
-    ylab("Cell count") + 
+    ylab("Cell count") +
     ggtitle(label = plot.title, subtitle = plot.subtitle)
 
-  p = ggpubr::facet(p + theme_pubr(), facet.by = "mutant",
-        #short.panel.labs = FALSE,   
+  p = ggpubr::facet(p + ggpubr::theme_pubr(), facet.by = "mutant",
         panel.labs.background = list(fill = "white", color = "black")
   )
-  
+
   if (!file.exists(directory)) {
     dir.create(directory)
   }
@@ -85,6 +84,3 @@ plotFate = function(data,
 
   return(p)
 }
-
-# TODO
-# there are negative no_decision values

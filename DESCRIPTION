@@ -23,6 +23,7 @@ Imports:
     stats,
     utils,
     ComplexHeatmap,
-    circlize
+    circlize,
+    ggpubr
 URL: https://github.com/CBigOxf/mcjPlotter
 BugReports: https://github.com/CBigOxf/mcjPlotter/issues
