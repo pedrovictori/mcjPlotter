@@ -6,7 +6,7 @@
 \usage{
 consolidateFateData(
   directory = "",
-  mutants.to.plot = c("mutA", "mutB", "mutC", "WT")
+  mutants.to.plot = c("EGFR+", "p53-PTEN-", "EGFR+p53-PTEN-", "WT")
 )
 }
 \arguments{
