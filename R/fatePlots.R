@@ -12,15 +12,18 @@ consolidateFateData = function(directory = "",
                                )) {
   files = list.files(directory, pattern = ".csv", full.names = FALSE)
 
-  df = read.csv(paste0(directory, "/", files),check.names = FALSE)  %>%
+  df = utils::read.csv(paste0(directory, "/", files), check.names = FALSE) %>%
     rename(timepoint = `time point`) %>%
-    pivot_longer(!timepoint, values_to = 'count') %>%
-    separate(name, sep = '_', into = c("mutant", "fate"), extra = 'merge') %>%
-    na.omit() %>%
-    pivot_wider(names_from = c( fate), values_from = count) %>%
+    pivot_longer(!timepoint, values_to = "count") %>%
+    separate(name, sep = "_", into = c("mutant", "fate"), extra = "merge") %>%
+    stats::na.omit() %>%
+    pivot_wider(names_from = c(fate), values_from = count) %>%
     group_by(mutant) %>%
     mutate(apoptosis_cumulative = cumsum(apoptosis)) %>%
-    pivot_longer(cols = !c(timepoint, mutant), names_to = "Fate", values_to = "count")
+    pivot_longer(
+      cols = !c(timepoint, mutant),
+      names_to = "Fate", values_to = "count"
+    )
 
 
   return(df)
@@ -61,7 +64,9 @@ plotFate = function(data,
   }
 
   p = data %>%
-    dplyr::mutate(Fate = relevel(as.factor(Fate), ref = "no_fate_reached")) %>%
+    dplyr::mutate(Fate = stats::relevel(as.factor(Fate),
+      ref = "no_fate_reached"
+    )) %>%
     ggplot(., aes(x = timepoint, y = count, fill = Fate, color = Fate)) +
     geom_area(alpha = 0.8, size = .1) +
     viridis::scale_fill_viridis(discrete = T) +
@@ -70,8 +75,9 @@ plotFate = function(data,
     ylab("Cell count") +
     ggtitle(label = plot.title, subtitle = plot.subtitle)
 
-  p = ggpubr::facet(p + ggpubr::theme_pubr(), facet.by = "mutant",
-        panel.labs.background = list(fill = "white", color = "black")
+  p = ggpubr::facet(p + ggpubr::theme_pubr(),
+    facet.by = "mutant",
+    panel.labs.background = list(fill = "white", color = "black")
   )
 
   if (!file.exists(directory)) {

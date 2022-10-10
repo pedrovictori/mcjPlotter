@@ -10,7 +10,10 @@ consolidateConcentrationData = function(directory = "",
                                         to.plot = c("EGF", "oxygen")) {
   files = list.files(directory, pattern = ".csv", full.names = FALSE)
   concentration =
-    lapply(paste0(directory, "/", files), function(x) read.csv(x, sep = ","))
+    lapply(
+      paste0(directory, "/", files),
+      function(x) utils::read.csv(x, sep = ",")
+    )
   concentration = do.call("rbind", Map(cbind,
     Time = sapply(stringr::str_split(files, pattern = "_"), `[`, 4),
     concentration
@@ -53,89 +56,93 @@ plotConcentration = function(data,
   heatmap_list = list()
   legend_list = list()
 
-    for (time in unique(data$Time)) {
-      mat = data %>%
-        dplyr::select(!c(setdiff(setdiff(
-          colnames(data), c("Time", "i", "j")
-        ), to.plot))) %>%
-        pivot_wider(
-          names_from = j, values_from = as.symbol(to.plot),
-          id_expand = TRUE
-        ) %>%
-        filter(Time == time) %>%
-        dplyr::select(!Time) %>%
-        as.data.frame()
+  for (time in unique(data$Time)) {
+    mat = data %>%
+      dplyr::select(!c(setdiff(setdiff(
+        colnames(data), c("Time", "i", "j")
+      ), to.plot))) %>%
+      pivot_wider(
+        names_from = j, values_from = as.symbol(to.plot),
+        id_expand = TRUE
+      ) %>%
+      filter(Time == time) %>%
+      dplyr::select(!Time) %>%
+      as.data.frame()
 
-      rownames(mat) = mat$i
-      mat = mat[-1]
+    rownames(mat) = mat$i
+    mat = mat[-1]
 
-      mat = matrix(as.numeric(unlist(mat)), nrow = nrow(mat))
+    mat = matrix(as.numeric(unlist(mat)), nrow = nrow(mat))
 
-      rownames(mat) = c(0:(nrow(mat) - 1))
-      colnames(mat) = c(0:(ncol(mat) - 1))
+    rownames(mat) = c(0:(nrow(mat) - 1))
+    colnames(mat) = c(0:(ncol(mat) - 1))
 
-      if (length(unique(seq(min(as.numeric(data[, to.plot])),
+    if (length(unique(seq(min(as.numeric(data[, to.plot])),
+      max(as.numeric(data[, to.plot])),
+      length = 3
+    ))) < 2) {
+      message(
+        "Warning: min() and max() values for ", to.plot, " at time ",
+        time, " are identical. Not saving plot."
+      )
+    } else {
+      color = circlize::colorRamp2(seq(min(as.numeric(data[, to.plot])),
         max(as.numeric(data[, to.plot])),
         length = 3
-      ))) < 2) {
-        message(
-          "Warning: min() and max() values for ", to.plot, " at time ",
-          time, " are identical. Not saving plot."
-        )
-      } else {
-        color = circlize::colorRamp2(seq(min(as.numeric(data[, to.plot])),
-          max(as.numeric(data[, to.plot])),
-          length = 3
-        ), c("#188FA7", "#EEEEEE", "#EC4E20"), space = "RGB")
-        heatmap_list[[paste0(to.plot, "_", time)]] =
-          grid::grid.grabExpr(ComplexHeatmap::draw(ComplexHeatmap::Heatmap(
-            mat,
-            cluster_rows = F,
-            cluster_columns = F,
-            na_col = "white",
-            row_order = order(as.numeric(rownames(mat)), decreasing = TRUE),
-            row_names_side = "left",
-            column_labels = rep("",ncol(mat)),
-            row_labels = rep("",ncol(mat)),
-            rect_gp = grid::gpar(col = "white", lwd = 2),
-            col = color,
-            border = FALSE,
-            column_title = paste0("Time = ", time),
-            column_title_side = "bottom",
-            show_heatmap_legend = FALSE,
-            width = ncol(mat) * unit(1.5, "mm"), # to create square grid
-            height = ncol(mat) * unit(1.5, "mm"),
-          )))
+      ), c("#188FA7", "#EEEEEE", "#EC4E20"), space = "RGB")
+      heatmap_list[[paste0(to.plot, "_", time)]] =
+        grid::grid.grabExpr(ComplexHeatmap::draw(ComplexHeatmap::Heatmap(
+          mat,
+          cluster_rows = F,
+          cluster_columns = F,
+          na_col = "white",
+          row_order = order(as.numeric(rownames(mat)), decreasing = TRUE),
+          row_names_side = "left",
+          column_labels = rep("", ncol(mat)),
+          row_labels = rep("", ncol(mat)),
+          rect_gp = grid::gpar(col = "white", lwd = 2),
+          col = color,
+          border = FALSE,
+          column_title = paste0("Time = ", time),
+          column_title_side = "bottom",
+          show_heatmap_legend = FALSE,
+          width = ncol(mat) * unit(1.5, "mm"), # to create square grid
+          height = ncol(mat) * unit(1.5, "mm"),
+        )))
 
-        if (time == max(data$Time)) {
-          # drawing only at last time per element plotted to
-          # facilitate patchwork alignment
-          legend_list[[paste0(to.plot, "_", time)]] =
-            grid::grid.grabExpr(ComplexHeatmap::draw(ComplexHeatmap::Legend(
-              at = seq(min(as.numeric(data[, to.plot])),
-                               max(as.numeric(data[, to.plot])),
-                               length = 3),
-              labels = formatC(seq(min(as.numeric(data[, to.plot])),
-                                   max(as.numeric(data[, to.plot])),
-                                   length = 3), 
-                               format = "e",digits = 2),
-              title = to.plot, col_fun = color
-            )))
-        }
+      if (time == max(data$Time)) {
+        # drawing only at last time per element plotted to
+        # facilitate patchwork alignment
+        legend_list[[paste0(to.plot, "_", time)]] =
+          grid::grid.grabExpr(ComplexHeatmap::draw(ComplexHeatmap::Legend(
+            at = seq(min(as.numeric(data[, to.plot])),
+              max(as.numeric(data[, to.plot])),
+              length = 3
+            ),
+            labels = formatC(seq(min(as.numeric(data[, to.plot])),
+              max(as.numeric(data[, to.plot])),
+              length = 3
+            ),
+            format = "e", digits = 2
+            ),
+            title = to.plot, col_fun = color
+          )))
       }
-    
+    }
   }
   if (!file.exists(directory)) {
     dir.create(directory)
   }
   p = patchwork::wrap_plots(c(heatmap_list, legend_list)) +
     patchwork::plot_annotation(
-    title = paste0(to.plot, plot.title)
-  ) 
+      title = paste0(to.plot, plot.title)
+    )
   plot(p) # this won't be accurate, check printed version
 
-  ggsave(paste0(directory,"/", filename, ".png"),
-         p, width = in.width, height = in.height)
+  ggsave(paste0(directory, "/", filename, ".png"),
+    p,
+    width = in.width, height = in.height
+  )
 
   return(p)
 }

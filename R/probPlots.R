@@ -69,8 +69,10 @@ plotPbnSimulation = function(data,
       ggpubr::theme_pubr(legend = "top") +
       labs(
         title = plot.title,
-        subtitle = paste0(plot.subtitle,
-                          if_else(prob == "", "", paste0("p= ", prob))),
+        subtitle = paste0(
+          plot.subtitle,
+          if_else(prob == "", "", paste0("p= ", prob))
+        ),
         y = "Cell count", colour = "Subpopulation", fill = "Subpopulation"
       )
     if (length(pop.labels) > 0) {

@@ -24,6 +24,9 @@ Imports:
     utils,
     ComplexHeatmap,
     circlize,
-    ggpubr
+    ggforce,
+    viridis,
+    patchwork,
+    stringr
 URL: https://github.com/CBigOxf/mcjPlotter
 BugReports: https://github.com/CBigOxf/mcjPlotter/issues
