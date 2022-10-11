@@ -139,10 +139,8 @@ plotConcentration = function(data,
     )
   plot(p) # this won't be accurate, check printed version
 
-  ggsave(paste0(directory, "/", filename, ".png"),
-    p,
-    width = in.width, height = in.height
-  )
+  ggsave(paste0(directory, filename, ".png"),
+    p, width = in.width, height = in.height)
 
   return(p)
 }

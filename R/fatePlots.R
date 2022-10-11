@@ -84,9 +84,7 @@ plotFate = function(data,
     dir.create(directory)
   }
   ggsave(paste0(directory, filename, ".png"),
-    p,
-    width = in.width, height = in.height
-  )
+    p, width = in.width, height = in.height)
 
   return(p)
 }
