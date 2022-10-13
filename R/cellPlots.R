@@ -12,10 +12,11 @@ loadTimePointData = function(timepoints, dir, mode, suffix) {
   prefix = paste0(dir, "/", mode, "_t")
 
   for (tp in timepoints) {
-    all[[tp]] = read.csv(paste0(prefix, tp, suffix))
+    all[[tp]] = read.csv(paste0(prefix, tp, suffix)) %>%
+      mutate(across(!c(subpopulation, cell_id), as.numeric))
   }
 
-  bind_rows(all, .id = "t")
+  bind_rows(all, .id = "t") %>% mutate(t = as.numeric(t))
 }
 
 
@@ -28,13 +29,13 @@ loadTimePointData = function(timepoints, dir, mode, suffix) {
 #' @export
 plotCellData = function(data, by, r = 50, discr = F, directory = "",
                         filename = "cellPlot",
-                        width = 10, height = 10) {
+                        width = 10, height = 10, viridisOption = "D") {
   p = data %>% ggplot() +
     ggforce::geom_circle(aes(x0 = i, y0 = j, r = r, fill = {{ by }}),
       color = "black"
     ) +
     facet_wrap(vars(t), labeller = label_both) +
-    viridis::scale_fill_viridis(discrete = discr) +
+    viridis::scale_fill_viridis(discrete = discr, option = viridisOption) +
     ggpubr::theme_pubr() +
     theme(
       axis.text = element_blank(), axis.ticks = element_blank(),
