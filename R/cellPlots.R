@@ -27,7 +27,7 @@ loadTimePointData = function(timepoints, dir, mode, suffix) {
 #'
 #' @return A ggplot2 object
 #' @export
-plotCellData = function(data, by, r = 50, discr = F, directory = "",
+plotCellData = function(data, by, r = 10, discr = F, directory = "",
                         filename = "cellPlot",
                         width = 10, height = 10, viridisOption = "D") {
   p = data %>% ggplot() +
