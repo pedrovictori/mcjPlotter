@@ -31,11 +31,11 @@ plotCellData = function(data, by, r = 10, discr = F, directory = "",
                         filename = "cellPlot",
                         width = 10, height = 10, viridisOption = "D") {
   p = data %>% ggplot() +
-    ggforce::geom_circle(aes(x0 = i, y0 = j, r = r, fill = {{ by }}),
-      color = "black"
-    ) +
+    ggforce::geom_circle(aes(x0 = i, y0 = j, r = r,col= {{by}}, fill = {{ by }}),
+                         alpha = 0.8) +
     facet_wrap(vars(t), labeller = label_both) +
     viridis::scale_fill_viridis(discrete = discr, option = viridisOption) +
+    viridis::scale_color_viridis(discrete = discr, option = viridisOption) +
     ggpubr::theme_pubr() +
     theme(
       axis.text = element_blank(), axis.ticks = element_blank(),
