@@ -1,13 +1,11 @@
 #' Consolidate concentration data
 #'
 #' @param directory The directory from which to load the data.
-#' @param to.plot Elements of interest to plot later.
 #' Default: c("EGF", "oxygen")
 #' @return A single list of data frames, one for each element to plot.
 #' @export
 
-consolidateConcentrationData = function(directory = "",
-                                        to.plot = c("EGF", "oxygen")) {
+consolidateConcentrationData = function(directory = "") {
   files = list.files(directory, pattern = ".csv", full.names = FALSE)
   concentration =
     lapply(
@@ -18,11 +16,7 @@ consolidateConcentrationData = function(directory = "",
     Time = sapply(stringr::str_split(files, pattern = "_"), `[`, 4),
     concentration
   ))
-  # for (element in to.plot) {
-  #   concentration[, element] =
-  #     # format to scientific notation to prevent misbehavior of plots
-  #     as.numeric(concentration[, element], scientific = TRUE)
-  # }
+
   concentration$Time =
     as.numeric(gsub(pattern = "t", replacement = "", concentration$Time))
   concentration = concentration[with(concentration, order(Time, i, j)), ]
