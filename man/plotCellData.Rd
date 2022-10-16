@@ -4,7 +4,17 @@
 \alias{plotCellData}
 \title{Plot timepoint data}
 \usage{
-plotCellData(data, by)
+plotCellData(
+  data,
+  by,
+  r = 10,
+  discr = F,
+  directory = "",
+  filename = "cellPlot",
+  width = 10,
+  height = 10,
+  viridisOption = "D"
+)
 }
 \arguments{
 \item{data}{The data to be plotted}
