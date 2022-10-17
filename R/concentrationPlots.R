@@ -83,7 +83,7 @@ plotConcentration = function(data,
       color = circlize::colorRamp2(seq(min(as.numeric(data[, to.plot])),
         max(as.numeric(data[, to.plot])),
         length = 3
-      ), c("#188FA7", "#EEEEEE", "#EC4E20"), space = "RGB")
+      ), c("#440154", "#21918c", "#fde725"), space = "RGB")
       heatmap_list[[paste0(to.plot, "_", time)]] =
         grid::grid.grabExpr(ComplexHeatmap::draw(ComplexHeatmap::Heatmap(
           mat,
