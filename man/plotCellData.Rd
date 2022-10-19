@@ -13,7 +13,8 @@ plotCellData(
   filename = "cellPlot",
   width = 10,
   height = 10,
-  viridisOption = "D"
+  viridisOption = "D",
+  facet = T
 )
 }
 \arguments{

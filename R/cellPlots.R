@@ -29,11 +29,10 @@ loadTimePointData = function(timepoints, dir, mode, suffix) {
 #' @export
 plotCellData = function(data, by, r = 10, discr = F, directory = "",
                         filename = "cellPlot",
-                        width = 10, height = 10, viridisOption = "D") {
+                        width = 10, height = 10, viridisOption = "D", facet = T) {
   p = data %>% ggplot() +
-    ggforce::geom_circle(aes(x0 = i, y0 = j, r = r,col= {{by}}, fill = {{ by }}),
+    ggforce::geom_circle(aes(x0 = i, y0 = j, r = r,col= {{by}}, fill = {{by}}),
                          alpha = 0.8) +
-    facet_wrap(vars(t), labeller = label_both) +
     viridis::scale_fill_viridis(discrete = discr, option = viridisOption) +
     viridis::scale_color_viridis(discrete = discr, option = viridisOption) +
     ggpubr::theme_pubr() +
@@ -41,6 +40,10 @@ plotCellData = function(data, by, r = 10, discr = F, directory = "",
       axis.text = element_blank(), axis.ticks = element_blank(),
       axis.title = element_blank(), axis.line = element_blank()
     )
+
+  if(facet){
+    p = p + facet_wrap(vars(t), labeller = label_both)
+  }
 
   if (!file.exists(directory)) {
     dir.create(directory)

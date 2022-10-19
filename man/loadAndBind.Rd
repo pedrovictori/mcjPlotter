@@ -4,7 +4,7 @@
 \alias{loadAndBind}
 \title{Load raw microCJ data and bind it into a single data frame}
 \usage{
-loadAndBind(directory)
+loadAndBind(directory, not.numeric = c("cell_id", "subpopulation"))
 }
 \arguments{
 \item{directory}{the directory where the data is located}

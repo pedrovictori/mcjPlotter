@@ -4,12 +4,10 @@
 \alias{consolidateConcentrationData}
 \title{Consolidate concentration data}
 \usage{
-consolidateConcentrationData(directory = "", to.plot = c("EGF", "oxygen"))
+consolidateConcentrationData(directory = "")
 }
 \arguments{
-\item{directory}{The directory from which to load the data.}
-
-\item{to.plot}{Elements of interest to plot later.
+\item{directory}{The directory from which to load the data.
 Default: c("EGF", "oxygen")}
 }
 \value{

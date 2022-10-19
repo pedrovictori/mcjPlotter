@@ -4,11 +4,12 @@
 #'
 #' @return a data frame with the integrated data
 #' @export
-loadAndBind = function(directory){
+loadAndBind = function(directory, not.numeric = c("cell_id", "subpopulation")){
   files = list.files(directory, pattern = ".csv", full.names = FALSE)
   all = vector("list", length(files))
   for(file in files){
-    all[[file]] = read_csv(paste0(directory, "/", file))
+    all[[file]] = read.csv(paste0(directory, "/", file)) %>%
+      mutate(across(!not.numeric, as.numeric))
   }
 
   data = bind_rows(all, .id = 'filename')
