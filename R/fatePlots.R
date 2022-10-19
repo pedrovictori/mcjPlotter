@@ -12,15 +12,15 @@ consolidateFateData = function(directory = "",
                                )) {
   files = list.files(directory, pattern = ".csv", full.names = FALSE)
 
-  df = utils::read.csv(paste0(directory, "/", files), check.names = FALSE) %>%
+  df = utils::read.csv(paste0(directory, "/", files), check.names = FALSE) %>% # error: passing a vector of files!
     rename(timepoint = `time point`) %>%
-    pivot_longer(!timepoint, values_to = "count") %>%
+    tidyr::pivot_longer(!timepoint, values_to = "count") %>%
     separate(name, sep = "_", into = c("mutant", "fate"), extra = "merge") %>%
     stats::na.omit() %>%
-    pivot_wider(names_from = c(fate), values_from = count) %>%
+    tidyr::pivot_wider(names_from = c(fate), values_from = count) %>%
     group_by(mutant) %>%
     mutate(apoptosis_cumulative = cumsum(apoptosis)) %>%
-    pivot_longer(
+    tidyr::pivot_longer(
       cols = !c(timepoint, mutant),
       names_to = "Fate", values_to = "count"
     )

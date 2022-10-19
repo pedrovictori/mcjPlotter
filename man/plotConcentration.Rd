@@ -8,7 +8,8 @@ plotConcentration(
   data,
   directory = "",
   filename = "concentrationPlots",
-  to.plot = "EGF",
+  to.plot,
+  viridis.scale = "magma",
   plot.title = " concentration",
   in.width = 9,
   in.height = 9
