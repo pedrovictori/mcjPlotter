@@ -45,7 +45,7 @@ plotConcentration = function(data,
                              directory = "",
                              filename = "concentrationPlots",
                              to.plot,
-                             viridis.scale = "magma",
+                             viridis_scale = "magma",
                              plot.title = " concentration",
                              in.width = 9,
                              in.height = 9) {
