@@ -40,101 +40,43 @@ consolidateConcentrationData = function(directory = "") {
 #'
 #'
 
+
 plotConcentration = function(data,
                              directory = "",
                              filename = "concentrationPlots",
-                             to.plot = "EGF",
+                             to.plot,
+                             viridis.scale = "magma",
                              plot.title = " concentration",
                              in.width = 9,
                              in.height = 9) {
-  heatmap_list = list()
-  legend_list = list()
 
-  for (time in unique(data$Time)) {
-    mat = data %>%
-      dplyr::select(!c(setdiff(setdiff(
-        colnames(data), c("Time", "i", "j")
-      ), to.plot))) %>%
-      pivot_wider(
-        names_from = j, values_from = as.symbol(to.plot),
-        id_expand = TRUE
-      ) %>%
-      filter(Time == time) %>%
-      dplyr::select(!Time) %>%
-      as.data.frame()
 
-    rownames(mat) = mat$i
-    mat = mat[-1]
+  data = data %>%
+    select(Time,i,j,{{to.plot}})
+  p = data %>%
+    ggplot( aes(x = i, y = j, fill = {{to.plot}})) +
+    geom_raster() +
+    ggpubr::theme_pubr() +
+    viridis::scale_fill_viridis(option = viridis_scale,
+                                breaks = round(seq(min(as.numeric(data[, 4])),
+                                                   max(as.numeric(data[, 4])),
+                                                   length = 3
+                                ),digits = 2),
+                                labels = formatC(seq(min(as.numeric(data[, 4])),
+                                                     max(as.numeric(data[, 4])),
+                                                     length = 3
+                                ),
+                                format = "e", digits = 2
+                                )) +
+    facet_wrap("Time") +
+    theme(axis.text.x = element_blank(), axis.text.y = element_blank(),
+          axis.line = element_blank(), axis.ticks = element_blank()) +
+    ggtitle(plot.title)
 
-    mat = matrix(as.numeric(unlist(mat)), nrow = nrow(mat))
-
-    rownames(mat) = c(0:(nrow(mat) - 1))
-    colnames(mat) = c(0:(ncol(mat) - 1))
-
-    if (length(unique(seq(min(as.numeric(data[, to.plot])),
-      max(as.numeric(data[, to.plot])),
-      length = 3
-    ))) < 2) {
-      message(
-        "Warning: min() and max() values for ", to.plot, " at time ",
-        time, " are identical. Not saving plot."
-      )
-    } else {
-      color = circlize::colorRamp2(seq(min(as.numeric(data[, to.plot])),
-        max(as.numeric(data[, to.plot])),
-        length = 3
-      ), c("#440154", "#21918c", "#fde725"), space = "RGB")
-      heatmap_list[[paste0(to.plot, "_", time)]] =
-        grid::grid.grabExpr(ComplexHeatmap::draw(ComplexHeatmap::Heatmap(
-          mat,
-          cluster_rows = F,
-          cluster_columns = F,
-          na_col = "white",
-          row_order = order(as.numeric(rownames(mat)), decreasing = TRUE),
-          row_names_side = "left",
-          column_labels = rep("", ncol(mat)),
-          row_labels = rep("", ncol(mat)),
-          rect_gp = grid::gpar(col = "white", lwd = 2),
-          col = color,
-          border = FALSE,
-          column_title = paste0("Time = ", time),
-          column_title_side = "bottom",
-          show_heatmap_legend = FALSE,
-          width = ncol(mat) * unit(1.5, "mm"), # to create square grid
-          height = ncol(mat) * unit(1.5, "mm"),
-        )))
-
-      if (time == max(data$Time)) {
-        # drawing only at last time per element plotted to
-        # facilitate patchwork alignment
-        legend_list[[paste0(to.plot, "_", time)]] =
-          grid::grid.grabExpr(ComplexHeatmap::draw(ComplexHeatmap::Legend(
-            at = seq(min(as.numeric(data[, to.plot])),
-              max(as.numeric(data[, to.plot])),
-              length = 3
-            ),
-            labels = formatC(seq(min(as.numeric(data[, to.plot])),
-              max(as.numeric(data[, to.plot])),
-              length = 3
-            ),
-            format = "e", digits = 2
-            ),
-            title = to.plot, col_fun = color
-          )))
-      }
-    }
-  }
-  if (!file.exists(directory)) {
-    dir.create(directory)
-  }
-  p = patchwork::wrap_plots(c(heatmap_list, legend_list)) +
-    patchwork::plot_annotation(
-      title = paste0(to.plot, plot.title)
-    )
-  plot(p) # this won't be accurate, check printed version
+  plot(p)
 
   ggsave(paste0(directory, filename, ".png"),
-    p, width = in.width, height = in.height)
+    p, width = in.width, height = in.height, dpi = 400)
 
   return(p)
 }
