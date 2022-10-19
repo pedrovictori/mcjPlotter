@@ -71,7 +71,7 @@ plotPbnSimulation = function(data,
         title = plot.title,
         subtitle = paste0(
           plot.subtitle,
-          if_else(prob == "", "", paste0("p= ", prob))
+          if_else(prob == "", "", paste0(". p= 0.", prob))
         ),
         y = "Cell count", colour = "Subpopulation", fill = "Subpopulation"
       )
