@@ -1,15 +1,10 @@
 #' Consolidate fate data
 #'
 #' @param directory The directory from which to load the data.
-#' @param mutants.to.plot Mutants to plot in separate figures later.
-#' @return A single list of data frames, one for each element to plot.
+#' @return A single dataframe in long format.
 #' @export
 #'
-consolidateFateData = function(directory = "",
-                               mutants.to.plot = c(
-                                 "EGFR+", "p53-PTEN-",
-                                 "EGFR+p53-PTEN-", "WT"
-                               )) {
+consolidateFateData = function(directory = "") {
   files = list.files(directory, pattern = ".csv", full.names = FALSE)
 
   df_list = lapply(files,function(x){
@@ -18,7 +13,7 @@ consolidateFateData = function(directory = "",
   names(df_list) = files
   df =  do.call(rbind,  df_list) %>%
     dplyr::group_by(`time point`) %>%
-    dplyr::summarise(across(where(is.numeric), mean)) %>% # error: passing a vector of files!
+    dplyr::summarise(across(where(is.numeric), mean)) %>%
     rename(timepoint = `time point`) %>%
     tidyr::pivot_longer(!timepoint, values_to = "count") %>%
     separate(name, sep = "_", into = c("mutant", "fate"), extra = "merge") %>%
