@@ -9,7 +9,8 @@ plotConcentration(
   directory = "",
   filename = "concentrationPlots",
   to.plot,
-  viridis.scale = "magma",
+  viridis_palette = "magma",
+  fill_direction = 1,
   plot.title = " concentration",
   in.width = 9,
   in.height = 9

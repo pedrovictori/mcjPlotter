@@ -4,18 +4,13 @@
 \alias{consolidateFateData}
 \title{Consolidate fate data}
 \usage{
-consolidateFateData(
-  directory = "",
-  mutants.to.plot = c("EGFR+", "p53-PTEN-", "EGFR+p53-PTEN-", "WT")
-)
+consolidateFateData(directory = "")
 }
 \arguments{
 \item{directory}{The directory from which to load the data.}
-
-\item{mutants.to.plot}{Mutants to plot in separate figures later.}
 }
 \value{
-A single list of data frames, one for each element to plot.
+A single dataframe in long format.
 }
 \description{
 Consolidate fate data
