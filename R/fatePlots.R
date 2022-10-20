@@ -77,7 +77,8 @@ plotFate = function(data,
 
   p = ggpubr::facet(p + ggpubr::theme_pubr(),
     facet.by = "mutant",
-    panel.labs.background = list(fill = "white", color = "black")
+    panel.labs.background = list(fill = "white", color = "black"),
+    scales = "free_y"
   )
 
   if (!file.exists(directory)) {
