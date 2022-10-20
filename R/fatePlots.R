@@ -53,7 +53,8 @@ plotFate = function(data,
                     plot.title = "Number of cells reaching each fate",
                     plot.subtitle = "Per timepoint and mutant",
                     in.width = 9,
-                    in.height = 7) {
+                    in.height = 7,
+                    descending = F) {
 
   # Apoptosis or Apoptosis_cumulative
   if (apoptosis.cumulative == TRUE) {
@@ -65,9 +66,7 @@ plotFate = function(data,
   }
 
   p = data %>%
-    dplyr::mutate(Fate = stats::relevel(as.factor(Fate),
-      ref = "no_fate_reached"
-    )) %>%
+    dplyr::mutate(Fate = forcats::fct_reorder(Fate, count, .desc = descending)) %>%
     ggplot(., aes(x = timepoint, y = count, fill = Fate, color = Fate)) +
     geom_area(alpha = 0.8, size = .1) +
     viridis::scale_fill_viridis(discrete = T) +

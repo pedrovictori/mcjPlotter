@@ -27,6 +27,7 @@ Imports:
     ggforce,
     viridis,
     patchwork,
-    stringr
+    stringr,
+    forcats
 URL: https://github.com/CBigOxf/mcjPlotter
 BugReports: https://github.com/CBigOxf/mcjPlotter/issues

@@ -12,7 +12,8 @@ plotFate(
   plot.title = "Number of cells reaching each fate",
   plot.subtitle = "Per timepoint and mutant",
   in.width = 9,
-  in.height = 7
+  in.height = 7,
+  descending = F
 )
 }
 \arguments{
