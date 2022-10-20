@@ -45,38 +45,38 @@ plotConcentration = function(data,
                              directory = "",
                              filename = "concentrationPlots",
                              to.plot,
-                             viridis_scale = "magma",
+                             viridis_palette = "magma",
+                             fill_direction = 1,
                              plot.title = " concentration",
                              in.width = 9,
                              in.height = 9) {
-
-
   data = data %>%
-    select(Time,i,j,{{to.plot}})
+    select(Time, i, j, {{ to.plot }})
   p = data %>%
-    ggplot( aes(x = i, y = j, fill = {{to.plot}})) +
+    ggplot(aes(x = i, y = j, fill = {{ to.plot }})) +
     geom_raster() +
     ggpubr::theme_pubr() +
-    viridis::scale_fill_viridis(option = viridis_scale,
-                                breaks = round(seq(min(as.numeric(data[, 4])),
-                                                   max(as.numeric(data[, 4])),
-                                                   length = 3
-                                ),digits = 2),
-                                labels = formatC(seq(min(as.numeric(data[, 4])),
-                                                     max(as.numeric(data[, 4])),
-                                                     length = 3
-                                ),
-                                format = "e", digits = 2
-                                )) +
+    viridis::scale_fill_viridis(
+      option = viridis_palette,
+      breaks = round(seq(min(as.numeric(data[, 4])),
+        max(as.numeric(data[, 4])),
+        length = 3), digits = 2),
+      labels = formatC(seq(min(as.numeric(data[, 4])),
+        max(as.numeric(data[, 4])),
+        length = 3),
+      format = "e", digits = 2), direction = fill_direction) +
     facet_wrap("Time") +
-    theme(axis.text.x = element_blank(), axis.text.y = element_blank(),
-          axis.line = element_blank(), axis.ticks = element_blank()) +
+    theme(
+      axis.text.x = element_blank(), axis.text.y = element_blank(),
+      axis.line = element_blank(), axis.ticks = element_blank()) +
     ggtitle(plot.title)
 
   plot(p)
 
   ggsave(paste0(directory, filename, ".png"),
-    p, width = in.width, height = in.height, dpi = 400)
+    p,
+    width = in.width, height = in.height, dpi = 400
+  )
 
   return(p)
 }
