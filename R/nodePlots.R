@@ -30,7 +30,9 @@ processNodeData = function(data, filename){
 #'
 #' @return the plot
 #' @export
-plotNodes = function(data, timepoints = c(), filename, width = 18, height = 10){
+plotNodes = function(data, timepoints = c(), filename, width = 18, height = 10,
+                     title = "Node status, average of all cells in each subpopulation",
+                     subtitle = "100 replicates per time point"){
   p = data %>% filter(t %in% timepoints) %>%
     ggplot(aes(x=node, y=subpopulation)) +
     geom_tile(aes(fill=status)) +
@@ -38,8 +40,8 @@ plotNodes = function(data, timepoints = c(), filename, width = 18, height = 10){
     facet_grid(rows = vars(t)) +
     theme_pubr() +
     theme(axis.text.x = element_text(angle=-45, vjust = 1, hjust = 0)) +
-    ggtitle("Node status, average of all cells in each subpopulation",
-            subtitle = "100 replicates per time point")
+    ggtitle(title,
+            subtitle = subtitle)
   p
   ggsave(filename = filename,
          p, width = width, height = height)
