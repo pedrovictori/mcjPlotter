@@ -4,7 +4,15 @@
 \alias{plotNodes}
 \title{Plot node data}
 \usage{
-plotNodes(data, timepoints = c(), filename, width = 18, height = 10)
+plotNodes(
+  data,
+  timepoints = c(),
+  filename,
+  width = 18,
+  height = 10,
+  title = "Node status, average of all cells in each subpopulation",
+  subtitle = "100 replicates per time point"
+)
 }
 \arguments{
 \item{data}{processed data}
@@ -16,6 +24,10 @@ plotNodes(data, timepoints = c(), filename, width = 18, height = 10)
 \item{width}{width of the plot}
 
 \item{height}{height of the plot}
+
+\item{title}{title of the plot}
+
+\item{subtitle}{subtitle of the plot}
 }
 \value{
 the plot
