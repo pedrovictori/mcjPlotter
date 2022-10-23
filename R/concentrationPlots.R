@@ -65,7 +65,7 @@ plotConcentration = function(data,
         max(as.numeric(data[, 4])),
         length = 3),
       format = "e", digits = 2), direction = fill_direction) +
-    facet_wrap("Time") +
+    facet_wrap("Time", scales="free") +
     theme(
       axis.text.x = element_blank(), axis.text.y = element_blank(),
       axis.line = element_blank(), axis.ticks = element_blank()) +

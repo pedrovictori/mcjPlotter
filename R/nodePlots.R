@@ -23,7 +23,7 @@ processNodeData = function(data, filename){
 #' Plot node data
 #'
 #' @param data processed data
-#' @param timepoints time points to include
+#' @param timepoints time points to include?
 #' @param filename file name to save the plot
 #' @param width width of the plot
 #' @param height height of the plot
@@ -45,5 +45,5 @@ plotNodes = function(data, timepoints = c(), filename, width = 18, height = 10,
             subtitle = subtitle)
   p
   ggsave(filename = filename,
-         p, width = width, height = height)
+         p, width = width, height = height, dpi = 400)
 }

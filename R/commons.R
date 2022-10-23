@@ -28,11 +28,15 @@ plotCounts = function(data, timesteps = 3000){
     ggplot(aes(x = timepoint, y = mean, colour = pop, fill = pop)) +
     geom_line() +
     geom_ribbon(aes(ymin = mean - sterr, ymax = mean + sterr), alpha = 0.2, linetype = 0) +
-    xlim(0, timesteps) +
     ggpubr::theme_pubr(legend = "top") +
     labs(
       y = "Cell count", x = "Time step",
       colour = "Subpopulation", fill = "Subpopulation"
     )
+
+  if(! is.na(timesteps)){
+    p = p + xlim(0, timesteps)
+  }
+
   p
 }
