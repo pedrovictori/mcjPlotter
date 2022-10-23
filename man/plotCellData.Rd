@@ -14,7 +14,9 @@ plotCellData(
   width = 10,
   height = 10,
   viridisOption = "D",
-  facet = T
+  facet = T,
+  dpi = 400,
+  linewidth = 1
 )
 }
 \arguments{

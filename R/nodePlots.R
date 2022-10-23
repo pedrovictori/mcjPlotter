@@ -27,7 +27,8 @@ processNodeData = function(data, filename){
 #' @param filename file name to save the plot
 #' @param width width of the plot
 #' @param height height of the plot
-#'
+#' @param title title of the plot
+#' @param subtitle subtitle of the plot
 #' @return the plot
 #' @export
 plotNodes = function(data, timepoints = c(), filename, width = 18, height = 10,
