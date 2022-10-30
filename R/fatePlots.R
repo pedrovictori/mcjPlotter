@@ -54,7 +54,8 @@ plotFate = function(data,
                     plot.subtitle = "Per timepoint and mutant",
                     in.width = 9,
                     in.height = 7,
-                    descending = F) {
+                    descending = F,
+                     customPalette = c()) {
 
   # Apoptosis or Apoptosis_cumulative
   if (apoptosis.cumulative == TRUE) {
@@ -68,12 +69,18 @@ plotFate = function(data,
   p = data %>%
     dplyr::mutate(Fate = forcats::fct_reorder(Fate, count, .desc = descending)) %>%
     ggplot(., aes(x = timepoint, y = count, fill = Fate, color = Fate)) +
-    geom_area(alpha = 0.8, size = .1) +
-    viridis::scale_fill_viridis(discrete = T) +
-    viridis::scale_color_viridis(discrete = T) +
+    geom_area() +
     xlab("Time point") +
     ylab("Cell count") +
     ggtitle(label = plot.title, subtitle = plot.subtitle)
+
+  if(length(customPalette) == 0){
+    p = p + viridis::scale_fill_viridis(discrete = T) +
+      viridis::scale_color_viridis(discrete = T)
+  } else {
+    p = p + scale_fill_manual(values = customPalette) +
+      scale_colour_manual(values = customPalette)
+  }
 
   p = ggpubr::facet(p + ggpubr::theme_pubr(),
     facet.by = "mutant",

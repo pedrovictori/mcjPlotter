@@ -86,7 +86,7 @@ plotPbnSimulation = function(data,
     if (!file.exists(directory)) {
       dir.create(directory)
     }
-    ggsave(paste0(directory, paste0(data[["experiment.tag"]], prob), ".png"), p, width = 7.5, height = 5)
+    ggsave(paste0(directory, paste0(data[["experiment.tag"]], prob), ".png"), p, width = 8, height = 5, dpi =400)
   }
   return(plots)
 }
