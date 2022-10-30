@@ -58,13 +58,14 @@ plotConcentration = function(data,
     ggpubr::theme_pubr() +
     viridis::scale_fill_viridis(
       option = viridis_palette,
-      breaks = round(seq(min(as.numeric(data[, 4])),
-        max(as.numeric(data[, 4])),
-        length = 3), digits = 2),
-      labels = formatC(seq(min(as.numeric(data[, 4])),
+      breaks =seq(min(as.numeric(data[, 4])),
         max(as.numeric(data[, 4])),
         length = 3),
-      format = "e", digits = 2), direction = fill_direction) +
+      labels = formatC(seq(min(as.numeric(data[, 4])),
+        max(as.numeric(data[, 4])),
+        length = 3), format = "e", digits = 2),
+      direction = fill_direction,
+      limits = c(min(as.numeric(data[, 4])), max(as.numeric(data[, 4])))) +
     facet_wrap("Time") +
     theme(
       axis.text.x = element_blank(), axis.text.y = element_blank(),
