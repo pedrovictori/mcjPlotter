@@ -13,7 +13,8 @@ loadTimePointData = function(timepoints, dir, mode, suffix) {
 
   for (tp in timepoints) {
     all[[tp]] = read.csv(paste0(prefix, tp, suffix)) %>%
-      mutate(across(!c(subpopulation, cell_id, any_of("state")), as.numeric))
+      mutate(across(!c(subpopulation, cell_id, any_of("state")), as.numeric)) %>%
+      mutate(tp = tp)
   }
 
   bind_rows(all, .id = "t") %>% mutate(t = as.numeric(t))

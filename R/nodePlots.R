@@ -2,17 +2,21 @@
 #'
 #' @param data the data to be processed
 #' @param filename the file name to save processed data.
-#'
+#' @param average should the data be averaged by population
 #' @return the processed data
 #' @export
-processNodeData = function(data, filename){
+processNodeData = function(data, filename, average = T){
   proc = data %>% na.omit() %>%
     select(-c(Apoptosis, DNA_damage, EGFR_stimulus, Growth_Arrest, Necrosis,
               Proliferation, TGFBR_stimulus, FGFR3_stimulus, cell_id)) %>%
     mutate(t = as.numeric(sub(".+by\\_cell\\_t(\\d+).+\\.csv", "\\1", filename)),
-           .keep = "unused") %>%
-    group_by(subpopulation, t) %>%
-    summarise(across(.cols = everything(), mean)) %>%
+           .keep = "unused")
+
+  if(average){
+    proc = proc %>% group_by(subpopulation, t) %>%
+    summarise(across(.cols = everything(), mean))
+  }
+  proc = proc %>%
     pivot_longer(!c(subpopulation,t),
                  names_to = "node", values_to = "status")
 
