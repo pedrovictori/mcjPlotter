@@ -43,7 +43,7 @@ plotCellData = function(data, by, r = 10, discr = F, directory = "",
     )
 
   if(facet){
-    p = p + facet_wrap(vars(t), labeller = label_both)
+    p = p + facet_wrap(vars(tp), labeller = label_both)
   }
 
   if (!file.exists(directory)) {
